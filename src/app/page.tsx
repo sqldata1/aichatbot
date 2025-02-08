@@ -82,7 +82,7 @@ export default function Home() {
       <main className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 flex flex-col">
         <div className="flex-1 space-y-6">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-semibold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent">
               AI Chatbot
             </h1>
             <div className="flex gap-3">
@@ -124,7 +124,7 @@ export default function Home() {
                   <div
                     className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-soft ${
                       message.role === "user"
-                        ? "bg-primary-500 text-white"
+                        ? "bg-gray-700 text-white"
                         : "bg-accent-light dark:bg-accent-dark text-gray-800 dark:text-gray-200"
                     } transform transition-all duration-300 ease-out animate-fade-in hover:shadow-soft-lg`}
                   >
@@ -136,9 +136,9 @@ export default function Home() {
                 <div className="flex justify-start animate-slide-up">
                   <div className="bg-accent-light dark:bg-accent-dark rounded-2xl px-4 py-3 shadow-soft">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
                     </div>
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-primary-400 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
+                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
                 disabled={isLoading}
               />
               <button
@@ -161,7 +161,7 @@ export default function Home() {
                 className={`px-5 py-3 rounded-lg font-medium shadow-soft hover:shadow-soft-lg transition-all duration-200 ${
                   isLoading || !input.trim()
                     ? "bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed"
-                    : "bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white"
+                    : "bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white"
                 }`}
               >
                 Send
