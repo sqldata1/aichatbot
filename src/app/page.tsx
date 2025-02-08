@@ -74,20 +74,34 @@ export default function Home() {
       // Stream the response
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
       let metrics = {};
 
       while (reader) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
         
+        // Preserve incomplete line in buffer
+        buffer = lines.pop() || '';
+
         for (const line of lines) {
+          if (line.trim() === '') continue;
+          
           try {
             const parsed = JSON.parse(line);
             if (parsed.done) {
-              metrics = parsed;
+              metrics = {
+                total_duration: parsed.total_duration,
+                load_duration: parsed.load_duration,
+                prompt_eval_count: parsed.prompt_eval_count,
+                prompt_eval_duration: parsed.prompt_eval_duration,
+                eval_count: parsed.eval_count,
+                eval_duration: parsed.eval_duration,
+                context: parsed.context
+              };
             } else if (parsed.response) {
               setMessages(prev => prev.map(msg =>
                 msg.id === assistantMessage.id
@@ -96,8 +110,18 @@ export default function Home() {
               ));
             }
           } catch (e) {
-            console.error('Error parsing stream chunk:', e);
+            console.error('Error parsing JSON chunk:', e, 'Content:', line);
           }
+        }
+      }
+
+      // Process any remaining buffer content
+      if (buffer.trim()) {
+        try {
+          const parsed = JSON.parse(buffer);
+          if (parsed.done) metrics = parsed;
+        } catch (e) {
+          console.error('Error parsing final buffer content:', e);
         }
       }
 
@@ -174,15 +198,15 @@ export default function Home() {
                   <div
                     className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-soft ${
                       message.role === "user"
-                        ? "bg-gray-700 text-white"
+                        ? "dark:bg-gray-700 dark:text-white"
                         : "bg-accent-light dark:bg-accent-dark text-gray-800 dark:text-gray-200"
                     } transform transition-all duration-300 ease-out animate-fade-in hover:shadow-soft-lg`}
                   >
                     <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
                     {message.role === "assistant" && (
                       <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          Generated in {message.total_duration ? (message.total_duration / 1e6).toFixed(1) : '?'}ms ·
+                        <p className="text-xs italic text-gray-500 dark:text-gray-400">
+                          Generated in {message.total_duration ? ((message.total_duration / 1e6)/1000).toFixed(1) : '?'}s ·
                           Tokens: {message.prompt_eval_count || '?'} prompt / {message.eval_count || '?'} response
                         </p>
                       </div>
