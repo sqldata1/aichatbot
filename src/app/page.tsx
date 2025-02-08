@@ -7,6 +7,13 @@ interface Message {
   id: string;
   content: string;
   role: "user" | "assistant";
+  total_duration?: number;
+  load_duration?: number;
+  prompt_eval_count?: number;
+  prompt_eval_duration?: number;
+  eval_count?: number;
+  eval_duration?: number;
+  context?: any;
 }
 
 export default function Home() {
@@ -56,14 +63,50 @@ export default function Home() {
 
       if (!response.ok) throw new Error("Failed to get response");
 
-      const data = await response.json();
+      // Create initial assistant message
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: data.message,
-        role: "assistant",
+        content: "",
+        role: "assistant"
       };
-
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // Stream the response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let metrics = {};
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          try {
+            const parsed = JSON.parse(line);
+            if (parsed.done) {
+              metrics = parsed;
+            } else if (parsed.response) {
+              setMessages(prev => prev.map(msg =>
+                msg.id === assistantMessage.id
+                  ? { ...msg, content: msg.content + parsed.response }
+                  : msg
+              ));
+            }
+          } catch (e) {
+            console.error('Error parsing stream chunk:', e);
+          }
+        }
+      }
+
+      // Update with final metrics
+      setMessages(prev => prev.map(msg =>
+        msg.id === assistantMessage.id
+          ? { ...msg, ...metrics }
+          : msg
+      ));
     } catch (error) {
       console.error("Error:", error);
       const errorMessage: Message = {
@@ -136,6 +179,14 @@ export default function Home() {
                     } transform transition-all duration-300 ease-out animate-fade-in hover:shadow-soft-lg`}
                   >
                     <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                    {message.role === "assistant" && (
+                      <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          Generated in {message.total_duration ? (message.total_duration / 1e6).toFixed(1) : '?'}ms ·
+                          Tokens: {message.prompt_eval_count || '?'} prompt / {message.eval_count || '?'} response
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

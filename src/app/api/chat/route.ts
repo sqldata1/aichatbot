@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         model: "qwen2.5:0.5b",
         prompt: messages.map(msg => `${msg.role}: ${msg.content}`).join('\n'),
-        stream: false
+        stream: true
       }),
     });
 
@@ -32,10 +32,12 @@ export async function POST(request: Request) {
       throw new Error(`Ollama API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    const responseMessage = data.response;
-
-    return NextResponse.json({ message: responseMessage });
+    // Return the Ollama response stream directly
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+      },
+    });
   } catch (error) {
     console.error('Error processing chat request:', error);
     return NextResponse.json(
