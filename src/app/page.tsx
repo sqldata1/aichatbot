@@ -2,6 +2,36 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "./contexts/ThemeContext";
+import Sidebar from './components/Sidebar/Sidebar';
+import { Conversation } from './types/sidebar';
+
+const loadConversations = (): Conversation[] => {
+  const saved = localStorage.getItem('conversations');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map((conv: any) => ({
+        ...conv,
+        updatedAt: new Date(conv.updatedAt),
+        messages: conv.messages.map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }))
+      }));
+    } catch (error) {
+      console.error('Failed to parse saved conversations:', error);
+    }
+  }
+  return [];
+};
+
+const saveConversations = (conversations: Conversation[]) => {
+  try {
+    localStorage.setItem('conversations', JSON.stringify(conversations));
+  } catch (error) {
+    console.error('Failed to save conversations:', error);
+  }
+};
 
 interface Message {
   id: string;
@@ -17,12 +47,72 @@ interface Message {
 }
 
 export default function Home() {
+  const [conversations, setConversations] = useState<Conversation[]>(() => loadConversations());
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { theme, toggleTheme } = useTheme();
+
+  // Load messages when conversation changes
+  useEffect(() => {
+    if (currentConversationId) {
+      const conversation = conversations.find(c => c.id === currentConversationId);
+      if (conversation) {
+        setMessages(conversation.messages.map(msg => ({
+          id: msg.id,
+          content: msg.content,
+          role: msg.senderId === 'user' ? 'user' : 'assistant'
+        })));
+      }
+    } else {
+      setMessages([]);
+    }
+  }, [currentConversationId, conversations]);
+
+  // Save conversations when they change
+  useEffect(() => {
+    saveConversations(conversations);
+  }, [conversations]);
+
+  const createNewConversation = () => {
+    const newId = Date.now().toString();
+    const newConversation: Conversation = {
+      id: newId,
+      participants: ['You', 'Assistant'],
+      messages: [],
+      updatedAt: new Date(),
+      unreadCount: 0,
+      isPinned: false
+    };
+    setConversations(prev => [newConversation, ...prev]);
+    setCurrentConversationId(newId);
+    setMessages([]);
+  };
+
+  const updateConversation = (message: Message) => {
+    if (!currentConversationId) {
+      createNewConversation();
+    }
+    
+    setConversations(prev => prev.map(conv =>
+      conv.id === currentConversationId ? {
+        ...conv,
+        messages: [...conv.messages, {
+          id: message.id,
+          content: message.content,
+          type: 'text',
+          timestamp: new Date(),
+          status: 'sent',
+          senderId: message.role === 'user' ? 'user' : 'assistant'
+        }],
+        updatedAt: new Date(),
+        unreadCount: message.role === 'assistant' ? conv.unreadCount + 1 : conv.unreadCount
+      } : conv
+    ));
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -145,8 +235,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-surface-dark">
-      <main className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 flex flex-col">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-surface-dark">
+      <Sidebar
+        conversations={conversations}
+        onSelect={(id) => setCurrentConversationId(id)}
+      />
+      <main className="flex-1 max-w-5xl mx-auto p-4 md:p-6 flex flex-col">
         <div className="flex-1 space-y-6">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-600 to-gray-400 bg-clip-text text-transparent">
