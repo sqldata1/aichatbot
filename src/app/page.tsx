@@ -83,7 +83,14 @@ export default function Home() {
         <div className="flex-1 space-y-6">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent">
-              AI Chatbot
+              <span style={{color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                Quick R1
+                <img
+                  src="/globe.svg"
+                  alt="Cool Icon"
+                  className="h-6 w-6 inline-block"
+                />
+              </span>
             </h1>
             <div className="flex gap-3">
               <button
