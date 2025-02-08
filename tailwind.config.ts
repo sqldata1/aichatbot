@@ -23,7 +23,7 @@ export default {
           700: '#0369a1',
         },
         surface: {
-          light: '#ffffff',
+          light: '#f2f2f2',
           dark: '#1a1a1a',
         },
         accent: {

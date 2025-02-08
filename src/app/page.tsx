@@ -149,7 +149,7 @@ export default function Home() {
       <main className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 flex flex-col">
         <div className="flex-1 space-y-6">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-700 to-gray-500 bg-clip-text text-transparent">
+            <h1 className="text-2xl font-semibold bg-gradient-to-r from-gray-600 to-gray-400 bg-clip-text text-transparent">
               <span style={{color: 'inherit', display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
                 Quick R1
                 <img
