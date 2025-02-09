@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTheme } from "@/app/contexts/ThemeContext";
 import Sidebar from '@/app/components/Sidebar/Sidebar';
 import { Conversation } from '@/app/types/sidebar';
+import { MODEL } from '@/constants/model';
 
 const loadConversations = (): Conversation[] => {
   if (typeof window === 'undefined') return [];
@@ -353,6 +354,10 @@ export default function Home() {
           </div>
         </div>
       </main>
+      {/* Updated element to display the running model */}
+      <div className="fixed bottom-2 right-2 text-xs text-gray-600 dark:text-gray-400">
+        Model: {MODEL}
+      </div>
     </div>
   );
 }

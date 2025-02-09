@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { MODEL } from '@/constants/model';
 
 export async function POST(request: Request) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: Request) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "qwen2.5:0.5b",
+        model: MODEL,
         prompt: messages.map(msg => `${msg.role}: ${msg.content}`).join('\n'),
         stream: true
       }),
