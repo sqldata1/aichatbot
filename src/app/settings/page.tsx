@@ -1,11 +1,20 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from '@/app/contexts/ThemeContext';
 
 const SettingsPage = () => {
   const { theme, toggleTheme } = useTheme();
+
+  // Add a one-time refresh to load the correct theme
+  useEffect(() => {
+    if (!window.location.search.includes('refreshed')) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('refreshed', '1');
+      window.location.replace(url.toString());
+    }
+  }, []);
 
   return (
     <div className={`min-h-screen p-4 ${
