@@ -11,27 +11,46 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const getInitialTheme = (): Theme => {
+  if (typeof window !== 'undefined') {
+    // Check localStorage first
+    const savedTheme = localStorage.getItem("theme") as Theme;
+    if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
+      return savedTheme;
+    }
+
+    // If no saved theme, check system preference
+    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return systemPreference ? 'dark' : 'light';
+  }
+  return 'dark'; // Default theme for SSR
+};
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Get initial theme from localStorage or use dark as default
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    const initialTheme = savedTheme || "dark";
-    setTheme(initialTheme);
-    document.documentElement.classList.add(initialTheme);
+    setMounted(true);
   }, []);
 
   useEffect(() => {
-    // Update class and localStorage when theme changes
-    document.documentElement.classList.remove("light", "dark");
-    document.documentElement.classList.add(theme);
+    if (!mounted) return;
+
+    // Update localStorage and DOM
     localStorage.setItem("theme", theme);
-  }, [theme]);
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(theme);
+  }, [theme, mounted]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === "light" ? "dark" : "light");
   };
+
+  // Prevent flash of wrong theme
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
