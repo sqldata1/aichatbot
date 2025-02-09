@@ -5,6 +5,7 @@ import { Virtuoso } from 'react-virtuoso';
 import { useTheme } from '../../contexts/ThemeContext';
 import './sidebar.css';
 import { Conversation, Message } from '../../types/sidebar';
+import Link from 'next/link';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -179,6 +180,15 @@ const Sidebar = ({ conversations, onSelect }: SidebarProps) => {
           );
         }}
       />
+
+      {/* New settings icon at the bottom of the sidebar */}
+      <div className="sidebar-settings">
+        <Link href="/settings">
+          <button className="settings-button" aria-label="Settings">
+            ⚙️
+          </button>
+        </Link>
+      </div>
     </nav>
   );
 };
