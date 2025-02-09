@@ -6,6 +6,7 @@ import Sidebar from '@/app/components/Sidebar/Sidebar';
 import { Conversation } from '@/app/types/sidebar';
 
 const loadConversations = (): Conversation[] => {
+  if (typeof window === 'undefined') return [];
   const saved = localStorage.getItem('conversations');
   if (saved) {
     try {
@@ -26,6 +27,7 @@ const loadConversations = (): Conversation[] => {
 };
 
 const saveConversations = (conversations: Conversation[]) => {
+  if (typeof window === 'undefined') return;
   try {
     localStorage.setItem('conversations', JSON.stringify(conversations));
   } catch (error) {
@@ -47,7 +49,7 @@ interface Message {
 }
 
 export default function Home() {
-  const [conversations, setConversations] = useState<Conversation[]>(() => loadConversations());
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -55,6 +57,11 @@ export default function Home() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { theme, toggleTheme } = useTheme();
+
+  // Load conversations on mount
+  useEffect(() => {
+    setConversations(loadConversations());
+  }, []);
 
   // Load messages when conversation changes
   useEffect(() => {
