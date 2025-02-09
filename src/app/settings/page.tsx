@@ -8,20 +8,29 @@ const SettingsPage = () => {
   const { theme } = useTheme();
 
   return (
-    <div className={`settings-page ${theme}-theme`}>
-      {/* Back button */}
-      <div className="back-button-container">
+    <div className={`min-h-screen p-4 ${
+      theme === 'dark' ? 'bg-surface-dark text-white' : 'bg-white text-gray-900'
+    }`}>
+      <div className="max-w-4xl mx-auto">
         <Link href="/">
-          <button className="back-button" aria-label="Back">
+          <button className={`mb-6 px-4 py-2 rounded-lg ${
+            theme === 'dark' 
+              ? 'bg-gray-800 hover:bg-gray-700 text-white' 
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-900'
+          }`}>
             ← Back
           </button>
         </Link>
-      </div>
-      
-      <div className="settings-content">
-        <h1>Settings</h1>
-        <p>This is the settings page.</p>
-        {/* ...additional settings content... */}
+        
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold">Settings</h1>
+          <p className={`${
+            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            This is the settings page.
+          </p>
+          {/* ...additional settings content... */}
+        </div>
       </div>
     </div>
   );
