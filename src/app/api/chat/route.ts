@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       }
     ];
 
-    const response = await fetch('http://87.106.44.88:11434/api/generate', {
+    const response = await fetch('http://217.154.5.46:11434/api/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
