@@ -303,7 +303,7 @@ export default function Home() {
                   <div
                     className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-soft ${
                       message.role === "user"
-                        ? "bg-gray-200 text-white dark:bg-gray-700 dark:text-white text-black"
+                        ? "bg-gray-300 text-black dark:bg-gray-700 dark:text-white"
                         : "bg-accent-light dark:bg-accent-dark text-gray-800 dark:text-gray-200"
                     } transform transition-all duration-300 ease-out animate-fade-in hover:shadow-soft-lg`}
                   >
