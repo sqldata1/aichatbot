@@ -339,7 +339,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
+                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
                 disabled={isLoading}
               />
               <button
