@@ -303,7 +303,7 @@ export default function Home() {
                   <div
                     className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-soft ${
                       message.role === "user"
-                        ? "dark:bg-gray-700 dark:text-white"
+                        ? "bg-gray-200 text-white dark:bg-gray-700 dark:text-white text-black"
                         : "bg-accent-light dark:bg-accent-dark text-gray-800 dark:text-gray-200"
                     } transform transition-all duration-300 ease-out animate-fade-in hover:shadow-soft-lg`}
                   >
@@ -339,7 +339,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
+                className="flex-1 p-3 bg-surface-light dark:bg-surface-dark rounded-lg border-0 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-800 dark:text-gray-200 placeholder-gray-400 shadow-soft transition-all"
                 disabled={isLoading}
               />
               <button
